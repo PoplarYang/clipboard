@@ -8,13 +8,32 @@
 
 import Foundation
 import AppKit
+import CommandLineKit
 
 class SaveManager{
 
-    let pasteboard = NSPasteboard.general
+    // command line argvs parse
+    func argvParse() -> (String) {
+        let cli = CommandLineKit.CommandLine()
+        let filePath = StringOption(shortFlag: "o",
+                                   longFlag: "out",
+                                   required: false,
+                                   helpMessage: "File path you want to save PNG to, default: ./clipboard.png")
+        cli.addOptions(filePath)
+
+        do {
+            try cli.parse()
+            return filePath.value ?? "./clipboard.png"
+        } catch {
+            cli.printUsage(error)
+            return ""
+        }
+    }
+    
 
     @available(OSX 10.13, *)
-    func saveToLocal(){
+    func saveFile(filePath: String){
+        let pasteboard = NSPasteboard.general
         // .fileURL
 //        if let data = pasteboard.data(forType: .fileURL){
 //            guard let fileUri = NSString(data: data , encoding: String.Encoding.utf8.rawValue) else{
@@ -39,20 +58,15 @@ class SaveManager{
 
         // Image PNG
         if let data = pasteboard.data(forType: .png){
-            let fileName: String = "image.png"
-//            let pngPath = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false).appendingPathComponent(filePath)
-            let home = FileManager.default.homeDirectoryForCurrentUser
-            let pngPath = home.appendingPathComponent(fileName)
-
+            let pngURL = URL(fileURLWithPath: filePath)
             do {
-                try data.write(to: pngPath, options: .atomic)
+                try data.write(to: pngURL, options: .atomic)
             } catch {
                 print(error)
             }
-            print("File Path: \(pngPath)")
+            print("File Path: \(pngURL)")
             print("File Type: PNG")
             print("Content Count: \(data.count)")
-
             return
         }
 
@@ -71,7 +85,11 @@ class SaveManager{
 
 let manager = SaveManager()
 if #available(OSX 10.13, *) {
-    manager.saveToLocal()
+    let filePath =  manager.argvParse()
+    if filePath == "" {
+        exit(-1)
+    }
+    manager.saveFile(filePath: filePath)
 } else {
     // Fallback on earlier versions
     print("Only support 10.13+")
