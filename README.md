@@ -13,9 +13,17 @@ $ swift build
 
 ## Usage
 ```shell
-$ ./clipboard
+$ ./clipboard [ -o /path/to/image.png ]
+
+
+$ ./clipboard -h
+Usage: ./clipboard [options]
+  -o, --out:
+      File path you want to save PNG to, default: ./clipboard.png
+  -h, --help:
+      Prints a help message.
 ```
 
 ## TODO
-- [ ] Judge clipboard content
-- [ ] support command line argvs, such as save-dir,  output-name
+- [] Judge clipboard content
+- [X] support command line argvs, such as save-dir,  output-name

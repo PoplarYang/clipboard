@@ -8,21 +8,31 @@
 
 import Foundation
 import AppKit
+import PathKit
 import CommandLineKit
 
 class SaveManager{
-
+    let cli = CommandLineKit.CommandLine()
+    
     // command line argvs parse
     func argvParse() -> (String) {
-        let cli = CommandLineKit.CommandLine()
+        
         let filePath = StringOption(shortFlag: "o",
                                    longFlag: "out",
                                    required: false,
                                    helpMessage: "File path you want to save PNG to, default: ./clipboard.png")
-        cli.addOptions(filePath)
+        let help = BoolOption(shortFlag: "h",
+                              longFlag: "help",
+                              helpMessage: "Prints a help message.")
+        cli.addOptions(filePath, help)
 
         do {
             try cli.parse()
+            
+            if help.wasSet && !filePath.wasSet {
+                cli.printUsage()
+                exit(-1)
+            }
             return filePath.value ?? "./clipboard.png"
         } catch {
             cli.printUsage(error)
@@ -59,10 +69,20 @@ class SaveManager{
         // Image PNG
         if let data = pasteboard.data(forType: .png){
             let pngURL = URL(fileURLWithPath: filePath)
+            
+            let folderURL = pngURL.deletingLastPathComponent()
+            let path = Path(folderURL.path)
+            if !path.isDirectory {
+                print("\(folderURL.path) not directory.")
+                cli.printUsage()
+                exit(-1)
+            }
+            
             do {
                 try data.write(to: pngURL, options: .atomic)
             } catch {
-                print(error)
+                cli.printUsage(error)
+                exit(-1)
             }
             print("File Path: \(pngURL)")
             print("File Type: PNG")
@@ -79,6 +99,7 @@ class SaveManager{
 //        }
 
         print("File Type: not png")
+        cli.printUsage()
         exit(-1)
     }
 }
