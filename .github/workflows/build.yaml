@@ -23,5 +23,5 @@ jobs:
     - name: upload artifact
       uses: actions/upload-artifact@v2
       with:
-        name: clipboard
-        path: .build/debug/clipboard
+        name: clipboard_x86_64-apple-macosx
+        path: .build/x86_64-apple-macosx/debug/clipboard
