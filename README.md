@@ -1,6 +1,8 @@
 # clipboard
 A simple command line tool to Paste PNG into files, much like pbpaste does for text.
 
+![](https://github.com/PoplarYang/clipboard/workflows/.github/workflows/build.yaml/badge.svg)
+
 ## Save clipboard to local
 If clipboard content is PNG, save it userhome directory named "image.png".
 If not, do no thing.

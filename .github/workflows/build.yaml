@@ -1,0 +1,27 @@
+on:
+  push:
+    branches:
+      - master
+      - dev
+  pull_request:
+    branches: 
+      - master
+      - dev
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+
+    steps:
+    - name: checkout code
+      uses: actions/checkout@v2
+
+    - name: Build code
+      run: swift build -v
+
+    - name: upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: clipboard_x86_64-apple-macosx
+        path: .build/x86_64-apple-macosx/debug/clipboard
