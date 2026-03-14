@@ -4,9 +4,10 @@ A simple command line tool to Paste PNG into files, much like pbpaste does for t
 ![](https://github.com/PoplarYang/clipboard/workflows/.github/workflows/build.yaml/badge.svg)
 
 ## Save clipboard to local
-If clipboard content is PNG, save it userhome directory named "image.png".
-If not, do no thing.
-Only support 10.13+
+If clipboard content is PNG (or TIFF that can be converted), save it to the path you provide (default `./clipboard.png`).  
+Paths like `~/Pictures/shot.png` are expanded automatically and missing folders will be created for you.  
+If clipboard content is not PNG-compatible, the tool now prints the available pasteboard types so you know what is stored.  
+Only support macOS 10.13+
 
 ## Build
 ```shell
@@ -27,5 +28,5 @@ Usage: ./clipboard [options]
 ```
 
 ## TODO
-- [] Judge clipboard content
+- [X] Judge clipboard content
 - [X] support command line argvs, such as save-dir,  output-name
